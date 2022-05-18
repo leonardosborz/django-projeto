@@ -1,11 +1,16 @@
 
         <div class="recipe recipe-item">
             <div class="recipe-cover">
-                <img src="{{recipe.cover.url}}" alt="">
+                <a href="{% url 'recipes:recipe' recipe.id %}">
+                    <img src="{{recipe.cover.url}}" alt="{{ recipe.title}}">
+                </a>
             </div>
             <div class="recipe-title-container">
-                <a href="/recipes/3/">
-                    <h2 class="recipe-title">{{recipe.title}}</h2>
+                    <h2 class="recipe-title">
+                        <a href="{% url 'recipes:recipe' recipe.id %}">
+                            {{recipe.title}}
+                        </a>
+                    </h2>
                 </a>
             </div>
             <div class="recipe-author">
@@ -45,7 +50,7 @@
             </div>
 
             <footer class="recipe-footer">
-                <a class="recipe-read-more button button-dark button-full-width" href="/recipes/3/">
+                <a class="recipe-read-more button button-dark button-full-width" href="{% url 'recipes:recipe' recipe.id %}">
                     <i class="fas fa-eye"></i>
                     <span>ver mais...</span>
                 </a>

@@ -22,15 +22,13 @@
                     {{ recipe.created_at|date:"d/m/Y" }}
                 </span>
                 <span class="recipe-author-item">
-                    <a href="/">
                         <i class="fa-solid fa-layer-group"></i>
                         {{recipe.category.name}}
-                    </a>
                 </span>
             </div>
 
             <div class="recipe-content">
-                <p>{{recipe.preparation_steps}}</p>
+                <p>{{recipe.description}}</p>
             </div>
 
             <div class="recipe-meta-container">
@@ -48,12 +46,10 @@
                 </div>
             </div>
 
-            <footer class="recipe-footer">
-                <a class="recipe-read-more button button-dark button-full-width" href="/recipes/3/">
-                    <i class="fas fa-eye"></i>
-                    <span>ver mais...</span>
-                </a>
-            </footer>
+            <div class="recipe-content">
+                <p>{{recipe.preparation_steps|linebreaksbr}}</p>
+            </div>
+
 
 
         
