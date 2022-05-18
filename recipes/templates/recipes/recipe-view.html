@@ -1,12 +1,16 @@
+{% extends 'global/base.html' %}
 
+{% block title %}ALTERAR |{% endblock title %}
+
+{% block content %}
+    <div class="main-content main-content-detail container">    
+        {% for recipe in recipe %}
         <div class="recipe recipe-item">
             <div class="recipe-cover">
                 <img src="{{recipe.cover.url}}" alt="">
             </div>
             <div class="recipe-title-container">
-                <a href="/recipes/3/">
                     <h2 class="recipe-title">{{recipe.title}}</h2>
-                </a>
             </div>
             <div class="recipe-author">
                 <span class="recipe-author-item">
@@ -26,7 +30,7 @@
             </div>
 
             <div class="recipe-content">
-                <p>{{recipe.description}}</p>
+                <p>{{recipe.preparation_steps}}</p>
             </div>
 
             <div class="recipe-meta-container">
@@ -54,4 +58,7 @@
 
         
         </div>
-        
+        {% endfor %}
+
+    <div>
+{% endblock content %}
