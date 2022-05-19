@@ -1,10 +1,12 @@
 
         <div class="recipe recipe-item">
-            <div class="recipe-cover">
-                <a href="{% url 'recipes:recipe' recipe.id %}">
-                    <img src="{{recipe.cover.url}}" alt="{{ recipe.title}}">
-                </a>
-            </div>
+            {% if recipe.cover %}
+                <div class="recipe-cover">
+                    <a href="{% url 'recipes:recipe' recipe.id %}">
+                        <img src="{{recipe.cover.url}}" alt="{{ recipe.title}}">
+                    </a>
+                </div>
+            {% endif %}
             <div class="recipe-title-container">
                     <h2 class="recipe-title">
                         <a href="{% url 'recipes:recipe' recipe.id %}">
@@ -14,20 +16,28 @@
                 </a>
             </div>
             <div class="recipe-author">
+                {% if recipe.author is not None%}
                 <span class="recipe-author-item">
                     <i class="fa-solid fa-user"></i>
-                    {{recipe.author.first_name}} {{recipe.author.last_name}}
+                        {% if not recipe.author.first_name %}
+                            {{recipe.author}}
+                        {% else %}
+                            {{recipe.author.first_name}} {{recipe.author.last_name}}
+                        {% endif %}
                 </span>
+                {% endif %}
                 <span class="recipe-author-item">
                     <i class="fa-solid fa-calendar-alt"></i>
                     {{ recipe.created_at|date:"d/m/Y" }}
                 </span>
-                <span class="recipe-author-item">
-                    <a href="/">
-                        <i class="fa-solid fa-layer-group"></i>
-                        {{recipe.category.name}}
-                    </a>
-                </span>
+                {% if recipe.category is not None %}
+                    <span class="recipe-author-item">
+                        <a href="{% url 'recipes:category' recipe.category.id %}">
+                            <i class="fa-solid fa-layer-group"></i>
+                            {{recipe.category.name}}
+                        </a>
+                    </span>
+                {% endif %}
             </div>
 
             <div class="recipe-content">
@@ -49,14 +59,25 @@
                 </div>
             </div>
 
+            {% if is_detail_page is not True %}
             <footer class="recipe-footer">
                 <a class="recipe-read-more button button-dark button-full-width" href="{% url 'recipes:recipe' recipe.id %}">
                     <i class="fas fa-eye"></i>
                     <span>ver mais...</span>
                 </a>
             </footer>
+            {% endif %}
 
 
+            {% if is_detail_page is True %}
+            <div class="recipe-content preparation-steps">
+                {% if recipe.preparation_steps_is_html is True %}
+                    <p>{{recipe.preparation_steps|safe}}</p>
+                {% else %}
+                    <p>{{recipe.preparation_steps|linebreaksbr}}</p>
+                {% endif %}
+            </div>
+            {% endif %}
         
         </div>
         

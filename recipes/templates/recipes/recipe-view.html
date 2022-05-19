@@ -1,60 +1,9 @@
 {% extends 'global/base.html' %}
 
-{% block title %}ALTERAR |{% endblock title %}
+{% block title %} {{recipe.title}} |{% endblock title %}
 
 {% block content %}
-    <div class="main-content main-content-detail container">    
-        {% for recipe in recipe %}
-        <div class="recipe recipe-item">
-            <div class="recipe-cover">
-                <img src="{{recipe.cover.url}}" alt="">
-            </div>
-            <div class="recipe-title-container">
-                    <h2 class="recipe-title">{{recipe.title}}</h2>
-            </div>
-            <div class="recipe-author">
-                <span class="recipe-author-item">
-                    <i class="fa-solid fa-user"></i>
-                    {{recipe.author.first_name}} {{recipe.author.last_name}}
-                </span>
-                <span class="recipe-author-item">
-                    <i class="fa-solid fa-calendar-alt"></i>
-                    {{ recipe.created_at|date:"d/m/Y" }}
-                </span>
-                <span class="recipe-author-item">
-                        <i class="fa-solid fa-layer-group"></i>
-                        {{recipe.category.name}}
-                </span>
-            </div>
-
-            <div class="recipe-content">
-                <p>{{recipe.description}}</p>
-            </div>
-
-            <div class="recipe-meta-container">
-                <div class="recipe-meta recipe-preparation">
-                    <h3 class="recipe-meta-title"><i class="fas fa-stopwatch"></i> Preparo</h3>
-                    <div class="recipe-meta-text">
-                        {{ recipe.preparation_time }} {{ recipe.preparation_time_unit }}
-                    </div>
-                </div>
-                <div class="recipe-meta recipe-servings">
-                    <h3 class="recipe-meta-title"><i class="fas fa-pizza-slice"></i> Porções</h3>
-                    <div class="recipe-meta-text">
-                        {{ recipe.servings }} {{ recipe.servings_unit }}
-                    </div>
-                </div>
-            </div>
-
-            <div class="recipe-content">
-                <p>{{recipe.preparation_steps|linebreaksbr}}</p>
-            </div>
-
-
-
-        
-        </div>
-        {% endfor %}
-
-    <div>
+    <div class="main-content main-content-detail container">
+            {% include 'recipes/partials/recipe.html' %}
+    </div>
 {% endblock content %}
