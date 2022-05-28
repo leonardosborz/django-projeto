@@ -9,4 +9,18 @@
         {% endfor %}
 
     </div>
+
+    <div class="main-content container">
+        <div class="pagination">
+            <span class="center">
+                {% if recipes.has_previous %}
+                    <a href="?page={{ recipes.previous_page_number }}">Anterior</a>
+                    {% endif %}
+                
+                {% if recipes.has_next %}
+                    <a href="?page={{ recipes.next_page_number }}">Próxima</a>
+                {% endif %}
+            </span>
+        </div>
+    </div>
 {% endblock content %}
