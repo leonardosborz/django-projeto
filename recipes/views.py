@@ -8,13 +8,14 @@ from utils.pagination import make_pagination
 
 from .models import Recipe
 
-PER_PAGE = os.environ.get('PER_PAGE', 9)
+PER_PAGE = int(os.environ.get('PER_PAGE', 6))
 
 
 def home(request):
 
     recipes = Recipe.objects.filter(is_published=True).order_by('-id')
     page_obj, pagination_range = make_pagination(request, recipes, PER_PAGE)
+
     return render(request, 'recipes/home.html', {'recipes': page_obj,
                                                  'pagination_range': pagination_range,
                                                  })
