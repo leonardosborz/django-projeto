@@ -38,7 +38,7 @@ class AuthorRegisterFormUnitTest(TestCase):
         ('email', 'E-mail must be valid.'),
         ('username', (
             'Username must have letters, numbers or one of those @.+-_. '
-            'The length should be between 4 and 150 characters.'
+            'The length should be between 4 and 20 characters.'
         )),
         ('password', (
             'Password must have at least one uppercase letter, '
@@ -58,8 +58,8 @@ class AuthorRegisterFormIntegratedTest(DjangoTestCase):
             'first_name': 'first',
             'last_name': 'last',
             'email': 'email@email.com',
-            'password': 'StrongPassword',
-            'password2': 'StrongPassword',
+            'password': 'StrongPassword1',
+            'password2': 'StrongPassword1',
         }
         return super().setUp(*args, **kwargs)
 
@@ -97,11 +97,45 @@ class AuthorRegisterFormIntegratedTest(DjangoTestCase):
 
         self.assertIn(msg, response.content.decode('utf-8'))
 
+    def test_password_and_password_confirmation_are_iqual(self):
+        self.form_data['password'] = 'Abcd1234'
+        self.form_data['password2'] = 'Abcd123'
+        url = reverse('authors:create')
+        response = self.client.post(url, data=self.form_data, follow=True)
+
+        msg = 'Password and Re-password must be equal'
+
+        self.assertIn(msg, response.content.decode('utf-8'))
+
+        self.form_data['password'] = 'Abcd1234'
+        self.form_data['password2'] = 'Abcd1234'
+        url = reverse('authors:create')
+        response = self.client.post(url, data=self.form_data, follow=True)
+
+        self.assertNotIn(msg, response.content.decode('utf-8'))
+
     def test_password_field_is_strong(self):
         self.form_data['password'] = 'Abcd'
         url = reverse('authors:create')
         response = self.client.post(url, data=self.form_data, follow=True)
 
         msg = 'Invalid password.'
+
+        self.assertIn(msg, response.content.decode('utf-8'))
+
+    def test_send_get_to_registration_create_view_return_404(self):
+        url = reverse('authors:create')
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, 404)
+
+    def test_email_field_must_be_unique(self):
+        url = reverse('authors:create')
+
+        self.client.post(url, data=self.form_data, follow=True)
+
+        response = self.client.post(url, data=self.form_data, follow=True)
+
+        msg = 'This e-mail already in use.'
 
         self.assertIn(msg, response.content.decode('utf-8'))

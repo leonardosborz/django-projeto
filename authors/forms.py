@@ -1,25 +1,7 @@
-import re
-
 from django import forms
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
-
-
-def add_attr(field, attr_name, attr_new_val):
-    existing = field.widget.attrs.get(attr_name, '')
-    field.widget.attrs[attr_name] = f'{existing} {attr_new_val}'.strip()
-
-
-def add_placeholder(field, placeholder_val):
-    add_attr(field, 'placeholder', placeholder_val)
-
-
-def strong_password(password):
-    regex = re.compile(r'^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9]).{8,}$')
-
-    if not regex.match(password):
-        raise ValidationError('Invalid password.',
-            code='Invalid')
+from utils.django_forms import add_placeholder, strong_password
 
 
 class RegisterForm(forms.ModelForm):
@@ -54,7 +36,6 @@ class RegisterForm(forms.ModelForm):
     )
 
     email = forms.CharField(
-        required=True,
         help_text=(
             'E-mail must be valid.'),
         widget=forms.TextInput(attrs={
@@ -119,6 +100,17 @@ class RegisterForm(forms.ModelForm):
             'username',
             'password',
         ]
+
+    def clean_email(self):
+        email = self.cleaned_data.get('email', '')
+        exists = User.objects.filter(email=email).exists()
+
+        if exists:
+            raise ValidationError(
+                'This e-mail already in use.',
+                code='invalid'
+            )
+        return email
 
     def clean(self):
         cleaned_data = super().clean()
