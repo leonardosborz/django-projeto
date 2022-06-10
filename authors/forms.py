@@ -18,10 +18,7 @@ def strong_password(password):
     regex = re.compile(r'^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9]).{8,}$')
 
     if not regex.match(password):
-        raise ValidationError((
-            'Password must have at least one uppercase letter, '
-            'one lowercase letter and one number. The length should be '
-            'at least 8 characters.'),
+        raise ValidationError('Invalid password.',
             code='Invalid')
 
 
@@ -29,17 +26,61 @@ class RegisterForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        add_placeholder(self.fields['username'], 'Your username')
-        add_placeholder(self.fields['email'], 'Your e-mail')
-        add_placeholder(self.fields['first_name'], 'Ex.: John')
-        add_placeholder(self.fields['last_name'], 'Ex.: Doe')
+        #add_placeholder(self.fields['username'], 'Your username')
+        #add_placeholder(self.fields['email'], 'Your e-mail')
+        #add_placeholder(self.fields['first_name'], 'Ex.: John')
+        #add_placeholder(self.fields['last_name'], 'Ex.: Doe')
 
-    password2 = forms.CharField(
+    first_name = forms.CharField(
         required=True,
-        widget=forms.PasswordInput(attrs={
-            'placeholder': 'Repeat your password'
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Ex.: John'
         }),
-        label='Re-password'
+        label='First name',
+        error_messages={
+            'required': 'Write your first name',
+        }
+    )
+
+    last_name = forms.CharField(
+        required=True,
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Ex.: Doe'
+        }),
+        label='Last name',
+        error_messages={
+            'required': 'Write your last name',
+        }
+    )
+
+    email = forms.CharField(
+        required=True,
+        help_text=(
+            'E-mail must be valid.'),
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Your e-mail'
+        }),
+        label='E-mail',
+        error_messages={
+            'required': 'Write your e-mail',
+        }
+    )
+
+    username = forms.CharField(
+        label='Username',
+        help_text=(
+            'Username must have letters, numbers or one of those @.+-_. '
+            'The length should be between 4 and 20 characters.'
+        ),
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Your username'
+        }),
+        error_messages={
+            'required': 'Write your username',
+            'min_length': 'Username must have at least 4 characters',
+            'max_length': 'Username must have less than 20 characters',
+        },
+        min_length=4, max_length=20,
     )
 
     password = forms.CharField(
@@ -52,7 +93,22 @@ class RegisterForm(forms.ModelForm):
             'placeholder': 'Your password'
         }
         ),
-        validators=[strong_password])
+        label='Password',
+        validators=[strong_password],
+        error_messages={
+            'required': 'Write your password',
+        })
+
+    password2 = forms.CharField(
+        required=True,
+        widget=forms.PasswordInput(attrs={
+            'placeholder': 'Repeat your password'
+        }),
+        label='Re-password',
+        error_messages={
+            'required': 'Password and Re-password must be equal',
+        }
+    )
 
     class Meta:
         model = User
@@ -64,43 +120,6 @@ class RegisterForm(forms.ModelForm):
             'password',
         ]
 
-        labels = {
-            'first_name': 'First name',
-            'last_name': 'Last name',
-            'email': 'E-mail',
-            'username': 'Username',
-            'password': 'Password',
-        }
-
-        help_texts = {
-            'email': 'E-mail must be valid.',
-            'username': '150 characters or less. Letters, numbers and @/./+/-/_ only.'
-        }
-
-    def clean_password(self):
-        data = self.cleaned_data.get('password')
-
-        if 'atenção' in data:
-            raise ValidationError(
-                'Não digite %(value)s no campo password',
-                code='invalid',
-                params={'value': '"Atenção"'}
-            )
-
-        return data
-
-    def clean_first_name(self):
-        data = self.cleaned_data.get('first_name')
-
-        if 'John Doe' in data:
-            raise ValidationError(
-                'Do not type %(value)s in the first name field',
-                code='invalid',
-                params={'value': '"John Doe"'}
-            )
-
-        return data
-
     def clean(self):
         cleaned_data = super().clean()
 
@@ -109,7 +128,7 @@ class RegisterForm(forms.ModelForm):
 
         if password != password2:
             password_confirmation_error = ValidationError(
-                'Password and password2 must be equal',
+                'Password and Re-password must be equal',
                 code='invalid'
             )
             raise ValidationError({
